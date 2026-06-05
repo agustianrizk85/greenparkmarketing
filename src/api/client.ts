@@ -67,11 +67,17 @@ export const api = {
   dashboard: () => req<Dashboard>("GET", "/dashboard"),
   project: (name: string) => req<Project>("GET", "/projects/" + encodeURIComponent(name)),
 
-  // ---- collection writes (POST create/update, DELETE by _id) ----
+  // ---- collection reads / writes (POST create/update, DELETE by _id) ----
+  list: <T>(collection: string) => req<T[]>("GET", "/" + collection),
   saveEntity: <T>(collection: string, item: T) => req<T>("POST", "/" + collection, item),
   deleteEntity: (collection: string, id: string) =>
     req<{ status: string }>("DELETE", `/${collection}/${encodeURIComponent(id)}`),
 
   // ---- singleton / whole-value writes (PUT) ----
+  getSingleton: <T>(path: string) => req<T>("GET", "/" + path),
   putSingleton: <T>(path: string, body: T) => req<T>("PUT", "/" + path, body),
+
+  // ---- maintenance (admin) ----
+  reseed: () => req<{ status: string }>("POST", "/admin/seed"),
+  clearAll: () => req<{ status: string }>("POST", "/admin/clear"),
 };

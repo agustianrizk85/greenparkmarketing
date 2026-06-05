@@ -13,6 +13,7 @@ import { FunnelTower, FunnelDrill } from "./components/Funnel";
 import { Modal } from "./components/Modal";
 import type { DrillData } from "./components/Modal";
 import { Panel } from "./components/ui";
+import { MasterData } from "./master/MasterData";
 import {
   Alerts,
   ChannelDrill,
@@ -67,20 +68,50 @@ function AuthedApp({ auth }: { auth: Auth }) {
       </Splash>
     );
   }
-  return <DashboardView D={state.data} auth={auth} />;
+  return <DashboardView D={state.data} auth={auth} reload={reload} />;
 }
 
 function Splash({ tone, children }: { tone?: "error"; children: ReactNode }) {
   return <div className={`splash ${tone ?? ""}`}>{children}</div>;
 }
 
-function DashboardView({ D, auth }: { D: Dashboard; auth: Auth }) {
+function DashboardView({ D, auth, reload }: { D: Dashboard; auth: Auth; reload: () => void }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   useScale(stageRef, canvasRef);
 
   const [drill, setDrill] = useState<DrillData | null>(null);
   const open = useCallback((d: DrillData) => setDrill(d), []);
+  const [view, setView] = useState<"dash" | "admin">("dash");
+  const isAdmin = auth.user?.role === "admin";
+
+  if (view === "admin") {
+    return (
+      <>
+        <div className="gp-chrome">
+          <div className="gp-chrome-brand">
+            <span className="gp-logo-mark sm" /> Greenpark · Marketing — Master Data
+          </div>
+          <div className="gp-chrome-mid">Input · Import Excel/CSV · Seed &amp; Hapus data</div>
+          <div className="gp-chrome-right">
+            <button className="gp-chrome-btn" onClick={() => { setView("dash"); reload(); }}>
+              ← Dashboard
+            </button>
+            <span className="gp-chrome-user">
+              {auth.user?.name}
+              <small>{auth.user?.role}</small>
+            </span>
+            <button className="gp-chrome-btn" onClick={() => void auth.logout()}>
+              Logout
+            </button>
+          </div>
+        </div>
+        <div className="gp-admin">
+          <MasterData onChanged={reload} />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -91,6 +122,11 @@ function DashboardView({ D, auth }: { D: Dashboard; auth: Auth }) {
         <div className="gp-chrome-mid">Command Bento · Eksekusi &amp; alert dominan</div>
         <div className="gp-chrome-right">
           <span className="gp-chrome-hint">Klik KPI · funnel · channel · project untuk drilldown</span>
+          {isAdmin && (
+            <button className="gp-chrome-btn" onClick={() => setView("admin")}>
+              ⚙ Master Data
+            </button>
+          )}
           <span className="gp-chrome-user">
             {auth.user?.name}
             <small>{auth.user?.role}</small>
