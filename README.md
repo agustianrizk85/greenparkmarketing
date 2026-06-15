@@ -1,4 +1,20 @@
-# Marketing Frontend — Greenpark Qualified Demand Control Tower
+# Marketing Frontend — Greenpark
+
+> **Aplikasi utama saat ini: Alur Kerja Departemen Marketing** (`src/AppRouter.tsx`,
+> `pages/`, `services/`, `models/`, `context/`) — mengikuti pola `greenparkpermit`.
+> Backend: `greenparkmarketingbee` (Go, default `http://localhost:8086`).
+> Login: `kadep@greenpark.id` / `staff@greenpark.id`. Set `VITE_API_BASE` di `.env`.
+>
+> Empat alur (A Iklan Hardsell · B Iklan Video · C Organik Carousel · D Organik
+> Reels) di-seed otomatis saat membuat konten/campaign baru. Tiap langkah punya
+> PIC, phase, gate approval Kadep, budget iklan, dan SLA.
+>
+> Dashboard "Control Tower" lama (`src/App.tsx` + `components/panels.tsx`, dll.)
+> **masih tersimpan** namun bukan lagi entry point.
+
+---
+
+## (Lama) Qualified Demand Control Tower
 
 React + TypeScript (Vite) dashboard for the **Marketing** war-room. It renders
 the **Command Bento** layout — the full demand funnel, North Star KPI ribbon,

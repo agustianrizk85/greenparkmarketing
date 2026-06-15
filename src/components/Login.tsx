@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
-/** Login screen. Calls onLogin(username, password); shows server errors. */
-export function Login({ onLogin }: { onLogin: (u: string, p: string) => Promise<void> }) {
-  const [username, setUsername] = useState("");
+/** Login screen — shared Greenpark executive style (navy/green). */
+export function Login() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("kadep@greenpark.id");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +15,7 @@ export function Login({ onLogin }: { onLogin: (u: string, p: string) => Promise<
     setBusy(true);
     setError("");
     try {
-      await onLogin(username.trim(), password);
+      await login(email.trim(), password);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setBusy(false);
@@ -24,22 +26,21 @@ export function Login({ onLogin }: { onLogin: (u: string, p: string) => Promise<
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
         <div className="login-brand">
-          <div className="login-logo">
-            <span className="gp-logo-mark" />
-          </div>
+          <div className="login-logo">GP</div>
           <div>
-            <h1>Dashboard Marketing</h1>
-            <p>Greenpark Group · Qualified Demand Control Tower</p>
+            <h1>Alur Kerja Marketing</h1>
+            <p>Greenpark Group · Departemen Marketing</p>
           </div>
         </div>
 
         <label className="login-field">
-          <span>Username</span>
+          <span>Email</span>
           <input
             autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="admin"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="kadep@greenpark.id"
             autoComplete="username"
           />
         </label>
@@ -56,12 +57,14 @@ export function Login({ onLogin }: { onLogin: (u: string, p: string) => Promise<
 
         {error && <div className="login-error">{error}</div>}
 
-        <button className="login-btn" type="submit" disabled={busy || !username || !password}>
+        <button className="login-btn" type="submit" disabled={busy || !email || !password}>
           {busy ? "Memproses…" : "Masuk"}
         </button>
 
         <div className="login-hint">
-          Demo: <b>admin / admin123</b> (master data) · <b>viewer / viewer123</b> (lihat saja)
+          Kadep: <b>kadep@greenpark.id / kadep123</b> · Tim: <b>design@</b>, <b>copywriter@</b>,{" "}
+          <b>editor@</b>, <b>sosmed@</b>, <b>digital@</b> (staff123) · Lapangan: <b>talent@</b>,{" "}
+          <b>videografer@</b>
         </div>
       </form>
     </div>
