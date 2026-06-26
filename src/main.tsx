@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { App } from "./App";
 import "./styles.base.css";
 import "./styles.marketing.css";
+import "./styles.meta.css";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("#root mount point not found");

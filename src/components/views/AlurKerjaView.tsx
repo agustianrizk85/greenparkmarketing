@@ -3,6 +3,7 @@ import type { Alur, WorkItem, WorkStep, StepStatus, UpdateStepInput } from "../.
 import { workItemService } from "../../services/workitem.service";
 import { stepService } from "../../services/step.service";
 import { alurLabels, alurShort, phaseLabels, metadataFor } from "../../lib/alurCatalog";
+import { SyncContentPlan } from "./SyncContentPlan";
 
 const PHASE_ORDER = ["brief", "produksi", "review", "approval", "distribusi"];
 const statusTone: Record<StepStatus, string> = { pending: "grey", in_progress: "warn", done: "ok" };
@@ -19,6 +20,7 @@ export function AlurKerjaView({
 }) {
   const [selId, setSelId] = useState<number | null>(items[0]?.id ?? null);
   const [adding, setAdding] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (selId === null && items.length) setSelId(items[0].id);
@@ -33,11 +35,19 @@ export function AlurKerjaView({
           </span>
           <span style={{ flex: 1 }} />
           {canEdit && (
-            <button className="btn-primary sm" onClick={() => setAdding((v) => !v)}>
-              {adding ? "Tutup" : "+ Baru"}
-            </button>
+            <>
+              <button className="btn-ghost sm" onClick={() => setSyncing(true)} title="Tarik dari Google Sheet Content Plan">
+                ⟳ Sinkron
+              </button>
+              <button className="btn-primary sm" onClick={() => setAdding((v) => !v)}>
+                {adding ? "Tutup" : "+ Baru"}
+              </button>
+            </>
           )}
         </div>
+        {syncing && (
+          <SyncContentPlan onClose={() => setSyncing(false)} onApplied={onChanged} />
+        )}
         {adding && (
           <NewWorkItemForm
             onCreated={(it) => {

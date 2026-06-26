@@ -6,8 +6,10 @@ import { dashboardService } from "../services/dashboard.service";
 import { RingkasanView } from "./views/RingkasanView";
 import { AlurKerjaView } from "./views/AlurKerjaView";
 import { TugasSayaView } from "./views/TugasSayaView";
+import { MetaView } from "./views/MetaView";
+import { AdsView, WhatsAppView, InstagramView } from "./views/meta/MetaViews";
 
-type Tab = "ringkasan" | "alur" | "tugas";
+type Tab = "ringkasan" | "alur" | "tugas" | "ads" | "whatsapp" | "instagram" | "meta";
 
 const roleLabel: Record<string, string> = {
   kadep: "Kepala Departemen",
@@ -71,6 +73,10 @@ export function DesktopShell({ user }: { user: User }) {
     { key: "ringkasan", label: "Ringkasan" },
     { key: "alur", label: "Alur Kerja" },
     { key: "tugas", label: "Tugas Saya" },
+    { key: "ads", label: "Iklan (Ads)" },
+    { key: "whatsapp", label: "WhatsApp" },
+    { key: "instagram", label: "Instagram" },
+    { key: "meta", label: "Akun Meta" },
   ];
 
   return (
@@ -113,6 +119,10 @@ export function DesktopShell({ user }: { user: User }) {
           {tab === "ringkasan" && <RingkasanView items={items} warnings={warnings} />}
           {tab === "alur" && <AlurKerjaView items={items} canEdit={user.role !== "viewer"} onChanged={reload} />}
           {tab === "tugas" && <TugasSayaView user={user} canEdit={user.role !== "viewer"} onChanged={reload} />}
+          {tab === "ads" && <AdsView />}
+          {tab === "whatsapp" && <WhatsAppView />}
+          {tab === "instagram" && <InstagramView />}
+          {tab === "meta" && <MetaView user={user} />}
         </main>
       </div>
     </div>
