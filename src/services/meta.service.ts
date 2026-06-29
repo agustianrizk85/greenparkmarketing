@@ -66,6 +66,13 @@ export const metaService = {
   disconnect: (id: number) =>
     api.delete<{ connections: MetaConnection[] }>(`/meta/connections/${id}`).then((r) => r.data.connections),
 
+  // Tempel token manual (mis. System User token) — tanpa popup OAuth / redirect
+  // URI. Backend memvalidasi token, menyimpannya, dan menjadikannya akun aktif.
+  connectManual: (accessToken: string, label?: string) =>
+    api
+      .post<{ connections: MetaConnection[] }>("/meta/connections/manual", { access_token: accessToken, label })
+      .then((r) => r.data.connections),
+
   // URL for the OAuth popup. The token is passed as a query param because a
   // popup navigation can't set an Authorization header (same pattern as /ws).
   loginUrl: () =>

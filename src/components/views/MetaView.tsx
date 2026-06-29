@@ -155,6 +155,20 @@ export function MetaView({ user }: { user: User }) {
           </div>
         </div>
 
+        {/* Manual token — paste a System User token, no OAuth popup / redirect URI */}
+        {canManage && (
+          <div className="panel">
+            <div className="panel-hd">
+              <span className="ptitle">Tempel Token Manual</span>
+              <span className="pspacer" />
+              <span className="mc-badge">tanpa popup / redirect</span>
+            </div>
+            <div className="panel-bd scroll">
+              <ManualTokenForm onSaved={setConns} flash={flash} />
+            </div>
+          </div>
+        )}
+
         {/* App config */}
         <div className="panel">
           <div className="panel-hd">
@@ -165,6 +179,58 @@ export function MetaView({ user }: { user: User }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ManualTokenForm({
+  onSaved,
+  flash,
+}: {
+  onSaved: (c: MetaConnection[]) => void;
+  flash: (t: Toast) => void;
+}) {
+  const [token, setToken] = useState("");
+  const [label, setLabel] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    if (!token.trim()) {
+      flash({ tone: "err", msg: "Token belum diisi." });
+      return;
+    }
+    setSaving(true);
+    try {
+      onSaved(await metaService.connectManual(token.trim(), label.trim() || undefined));
+      setToken("");
+      setLabel("");
+      flash({ tone: "ok", msg: "Token tersimpan & akun ditambahkan." });
+    } catch (e) {
+      flash({ tone: "err", msg: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="meta-config">
+      <p className="meta-hint">
+        Cara tercepat tanpa login Facebook — cocok untuk banyak akun. Buat <b>System User token</b> di Meta →{" "}
+        <i>Business Settings → System Users → Generate Token</i> (pilih app, centang <code>ads_read</code>,{" "}
+        <code>whatsapp_business_management</code>, <code>business_management</code> dll), lalu tempel di bawah. Setiap
+        akun yang ditambahkan akan <b>digabung</b> datanya di tab Ads / WhatsApp / Instagram.
+      </p>
+      <label className="meta-field">
+        <span>Access Token</span>
+        <input value={token} onChange={(e) => setToken(e.target.value)} placeholder="EAA..." autoComplete="off" spellCheck={false} />
+      </label>
+      <label className="meta-field">
+        <span>Label (opsional)</span>
+        <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="cth. Akun Iklan Cirimekar" />
+      </label>
+      <button className="meta-btn primary wide" onClick={save} disabled={saving}>
+        {saving ? "Memeriksa token…" : "Simpan & Tambah Akun"}
+      </button>
     </div>
   );
 }
